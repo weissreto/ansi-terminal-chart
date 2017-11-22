@@ -1,6 +1,7 @@
 package ch.weiss.terminal.chart;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map.Entry;
 
 import javax.management.AttributeNotFoundException;
@@ -31,20 +32,8 @@ public class Jmx
   private long newGcTime = -1;
   private long oldGcTime = -1;
 
-  public Jmx() throws IOException, AttachNotSupportedException
+  public Jmx()
   {
-    for (VirtualMachineDescriptor vmDescriptor : VirtualMachine.list())
-    {
-      if (vmDescriptor.displayName().equals("ch.weiss.terminal.chart.Test"))
-      {
-        continue;
-      }
-      VirtualMachine vm = VirtualMachine.attach(vmDescriptor.id());
-      String jmx = vm.startLocalManagementAgent();
-      JMXConnector connector = JMXConnectorFactory.connect(new JMXServiceURL(jmx));
-      mBeanServer = connector.getMBeanServerConnection();
-      return;
-    }
   }
 
   public long getHeapUsed() throws Exception
@@ -131,5 +120,18 @@ public class Jmx
   public long getClassUnloaded() throws AttributeNotFoundException, InstanceNotFoundException, MalformedObjectNameException, MBeanException, ReflectionException, IOException
   {
     return (long) mBeanServer.getAttribute(new ObjectName("java.lang:type=ClassLoading"), "UnloadedClassCount");
+  }
+
+  public List<VirtualMachineDescriptor> getAvailableVirtualMaschines()
+  {
+    return VirtualMachine.list();
+  }
+  
+  public void connect(VirtualMachineDescriptor vmDescriptor) throws AttachNotSupportedException, IOException
+  {    
+    VirtualMachine vm = VirtualMachine.attach(vmDescriptor.id());
+    String jmx = vm.startLocalManagementAgent();
+    JMXConnector connector = JMXConnectorFactory.connect(new JMXServiceURL(jmx));
+    mBeanServer = connector.getMBeanServerConnection();
   }
 }

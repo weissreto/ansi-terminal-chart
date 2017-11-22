@@ -1,6 +1,18 @@
 package ch.weiss.terminal.chart;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
+
+import javax.management.AttributeNotFoundException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
+import javax.management.MalformedObjectNameException;
+import javax.management.ReflectionException;
+
+import com.sun.tools.attach.AttachNotSupportedException;
+import com.sun.tools.attach.VirtualMachineDescriptor;
 
 import ch.weiss.terminal.AnsiTerminal;
 import ch.weiss.terminal.chart.serie.Axis;
@@ -9,9 +21,22 @@ import ch.weiss.terminal.chart.unit.Unit;
 
 public class Test
 {
+  private AnsiTerminal term = AnsiTerminal.get();
+  private Jmx jmx = new Jmx(); 
+  
   public static void main(String[] args) throws Exception
+  { 
+    new Test().main();    
+  }
+
+  private void main() throws Exception
   {
-    AnsiTerminal term = AnsiTerminal.get();
+    connectToJavaVirtualMaschine();
+    drawCharts();
+  }
+
+  private void drawCharts() throws Exception
+  {
     term.clear();
     RollingTimeSerie heapUsed = new RollingTimeSerie(new Axis("Used", Unit.BYTES, ""), 10, TimeUnit.MINUTES, Color.BRIGHT_RED);
     RollingTimeSerie heapCommitted = new RollingTimeSerie(new Axis("Committed", Unit.BYTES, ""), 10, TimeUnit.MINUTES, Color.BRIGHT_BLUE);
@@ -36,7 +61,6 @@ public class Test
     RollingTimeSerie classUnloaded = new RollingTimeSerie(new Axis("Unloaded", Unit.NONE, ""), 10, TimeUnit.MINUTES, Color.BRIGHT_YELLOW);
     XYChart classLoading = new XYChart("Class Loading", new Rectangle(124, 22, 60, 20), totalClassLoaded, classLoaded, classUnloaded);
 
-    Jmx jmx = new Jmx(); 
     while (true)
     {      
       term.clear();
@@ -60,5 +84,32 @@ public class Test
       classLoading.paint();
       Thread.sleep(1000);
     }
+  }
+
+  private void connectToJavaVirtualMaschine() throws AttachNotSupportedException, IOException
+  {
+    term.clear();
+    term.cursor().position(0,0);
+    term.color().brightGreen().newLine().newLine();
+    term.write(" -----------").newLine();
+    term.write("| ConsoleVM |").newLine();
+    term.write(" -----------").newLine();
+    term.newLine();
+    term.newLine();
+    term.color().brightGreen().style().underline().write("Available Virtual Maschines:").newLine().newLine().reset();
+    int pos = 0;
+    List<VirtualMachineDescriptor> vmDescriptors = jmx.getAvailableVirtualMaschines();
+    for (VirtualMachineDescriptor vmDescriptor : vmDescriptors)
+    {
+      term.color().brightRed().write("[").write(pos++).write("]").write(" ")
+          .color().brightYellow().write(vmDescriptor.displayName())
+          .write(" (").write(vmDescriptor.id()).write(")").newLine();
+    }
+    term.newLine();
+    term.color().brightGreen().write("Enter the number of the virtual maschine you want to connect to: ");
+    term.color().brightRed();
+    Scanner scanner = new Scanner(System.in);
+    pos = scanner.nextInt();
+    jmx.connect(vmDescriptors.get(pos));
   }
 }
