@@ -14,6 +14,48 @@
           <target>1.8</target>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId> 
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.10</version>
+        <executions>
+          <execution> 
+            <id>thirdparty.libs</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy-dependencies</goal> 
+            </goals>
+            <configuration>
+              <outputDirectory>lib/mvn</outputDirectory>
+            </configuration>
+          </execution>
+          <execution> 
+            <id>thirdparty.lib.sources</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>copy-dependencies</goal> 
+            </goals>
+            <configuration>
+              <outputDirectory>lib/mvn-src</outputDirectory>
+              <classifier>sources</classifier>
+              <stripClassifier>true</stripClassifier>
+            </configuration>
+          </execution>
+        </executions>
+        <configuration>
+          <overWriteReleases>false</overWriteReleases>
+          <overWriteSnapshots>false</overWriteSnapshots>
+          <overWriteIfNewer>false</overWriteIfNewer>
+          <stripVersion>false</stripVersion>
+          <excludeArtifactIds>${project.artifactId},${project.artifactId}.source</excludeArtifactIds>
+          <includeArtifactIds>
+            ansi-terminal,
+            ansi-terminal-for-windows,
+            jna,
+            jna-platform
+          </includeArtifactIds>
+        </configuration>      
+      </plugin>
     </plugins>
   </build>
   <dependencies>
