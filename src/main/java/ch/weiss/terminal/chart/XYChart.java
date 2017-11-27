@@ -3,29 +3,39 @@ package ch.weiss.terminal.chart;
 import java.util.Arrays;
 import java.util.List;
 
+import ch.weiss.terminal.AnsiTerminal;
+import ch.weiss.terminal.Color;
+import ch.weiss.terminal.FontStyle;
+import ch.weiss.terminal.Style;
 import ch.weiss.terminal.chart.serie.DataPoint;
 import ch.weiss.terminal.chart.serie.DataSerie;
-import ch.weiss.terminal.chart.serie.RollingTimeSerie;
+import ch.weiss.terminal.graphics.Graphics;
+import ch.weiss.terminal.graphics.LineStyle;
+import ch.weiss.terminal.graphics.Point;
+import ch.weiss.terminal.graphics.Rectangle;
 
 public class XYChart
 {
   private List<DataSerie> dataSeries;
   private Rectangle window;
   private Rectangle chart;
-  private Graphic graphic = new Graphic();
+  private Graphics graphics = AnsiTerminal.get().graphics();
   private DataPoint lastDataPoint;
   private String title;
+  private Style titleStyle = Style.create().withColor(Color.BRIGHT_GREEN).withFontStyle(FontStyle.UNDERLINE).toStyle();
+  private Style axisStyle = Style.create().withColor(Color.BRIGHT_GREEN).toStyle();
   
   public XYChart(String title, Rectangle window, DataSerie... dataSeries)
   {
     this.title = title;
     this.window = window;
-    this.chart = new Rectangle(window.leftX()+6, window.topY()+1, window.width()-6, window.height()-4);
+    this.chart = window.moveTopLeft(6, 1).moveBottomRight(0, -3);
     this.dataSeries = Arrays.asList(dataSeries);
   }
   
   public void paint()
   {        
+    graphics.reset();
     paintTitle();
     paintAxis();
     paintDataSeries();
@@ -34,45 +44,47 @@ public class XYChart
   
   private void paintTitle()
   {
-    graphic.foregroundColor(Color.BRIGHT_GREEN);
-    graphic.drawTextUnderline(window.leftX()+(window.width()-title.length())/2, window.topY(), title);
+    graphics.style(titleStyle);    
+    graphics.drawText(new Point(window.leftX()+(window.width()-title.length())/2, window.topY()), title);
   }
 
   private void paintAxis()
   {
-    graphic.foregroundColor(Color.BRIGHT_GREEN);
+    graphics.style(axisStyle);
     paintYAxis(dataSeries.get(0));
     paintXAxis(dataSeries.get(0));
   }
 
   private void paintYAxis(DataSerie dataSerie)
   {
-    graphic.drawText(chart.leftX()-1, chart.topY(), "^");
-    graphic.drawVerticalLine(chart.leftX()-1, chart.topY()+1, chart.height());
+    graphics.drawCharacter(chart.topLeft().move(-1, 0), '^');
+    graphics.drawVerticalLine(chart.topLeft().move(-1, 1), chart.height());
     
     if (dataSerie.size() > 1)
     {
       long maxYValue = maxYValue();
       scaleYAxises(maxYValue);
       String maxYValueAsText = dataSerie.yAxis().format(maxYValue);
-      graphic.drawText(chart.leftX()-1-maxYValueAsText.length(), chart.topY(), maxYValueAsText);
+      graphics.drawText(
+          chart.topLeft().move(-1-maxYValueAsText.length(), 0), 
+          maxYValueAsText);
       long minYValue = minYValue();
       String minYValueAsText = dataSerie.yAxis().format(minYValue);
-      graphic.drawText(chart.leftX()-1-minYValueAsText.length(), chart.bottomY()+1, minYValueAsText);
+      graphics.drawText(
+          chart.bottomLeft().move(-1-minYValueAsText.length(), 1)
+          ,minYValueAsText);
     }
     
     String displayText = dataSerie.yAxis().scaledUnit().symbolWithBracesOrEmpty();
     if (displayText.length() <= 4)
     {
-      int yPos = chart.topY()+chart.height()/2;
-      int xPos = chart.leftX()-1-displayText.length();
-      graphic.drawText(xPos, yPos, displayText);
+      Point textStartPoint = chart.centerLeft().move(-1-displayText.length(), 0);
+      graphics.drawText(textStartPoint, displayText);
     }
     else
     {
-      int yPos = chart.topY()+(chart.height() - displayText.length())/2;
-      int xPos = chart.leftX()-2;
-      graphic.drawVerticalText(xPos, yPos, displayText);
+      Point textStartPoint = chart.centerLeft().move(-2, -displayText.length()/2);
+      graphics.drawVerticalText(textStartPoint, displayText);
     }
   }
 
@@ -94,26 +106,27 @@ public class XYChart
 
   private void paintXAxis(DataSerie dataSerie)
   {
-    graphic.drawText(chart.leftX()-1, chart.bottomY()+1, "\u2514");
-    graphic.drawHorizontalLine(chart.leftX(), chart.bottomY()+1, chart.width());
-    graphic.drawText(chart.rightX(), chart.bottomY()+1, ">");
+    graphics.drawCharacter(chart.bottomLeft().move(-1, 1), LineStyle.SINGLE_LINE.bottomLeft());
+    graphics.drawHorizontalLine(chart.bottomLeft().move(0, 1), chart.width());
+    graphics.drawCharacter(chart.bottomRight().move(0, 1), '>');
     
     String displayText = dataSerie.xAxis().displayText();
-    int width = chart.width();
-    int xPos = chart.leftX() + (width - displayText.length())/2;
-    graphic.drawText(xPos, chart.bottomY()+2, displayText);
+    Point textStartPoint = chart.centerBottom().move(-displayText.length()/2, 2);
+    graphics.drawText(textStartPoint, displayText);
     
     if (dataSerie.size() > 0)
     {
       long minXValue = dataSerie.minXValue();
       String minXValueAsText = dataSerie.xAxis().format(minXValue);
-      graphic.drawText(chart.leftX()-1, chart.bottomY()+2, minXValueAsText);
+      graphics.drawText(chart.bottomLeft().move(-1, 2), minXValueAsText);
     }
     if (dataSerie.size() > 1)
     {
       long maxXValue = dataSerie.maxXValue();
       String maxXValueAsText = dataSerie.xAxis().format(maxXValue);
-      graphic.drawText(chart.rightX()-maxXValueAsText.length()+1, chart.bottomY()+2, maxXValueAsText);
+      graphics.drawText(
+          chart.bottomRight().move(-maxXValueAsText.length()+1, 2), 
+          maxXValueAsText);
     }
   }
   
@@ -126,7 +139,8 @@ public class XYChart
   {
     int width;
     int height;
-    graphic.foregroundColor(dataSerie.getColor());
+    graphics.lineStyle(LineStyle.DOT);
+    graphics.color(dataSerie.getColor());
     width = chart.width();
     height = chart.height();
     
@@ -170,31 +184,27 @@ public class XYChart
       {
         return;
       }
-      graphic.drawLine(
-          (int)lastDataPoint.x(), 
-          (int)lastDataPoint.y(), 
-          (int)dp.x(), 
-          (int)dp.y(), 
-          ".");
+      graphics.drawLine(
+          new Point((int)lastDataPoint.x(),(int)lastDataPoint.y()), 
+          new Point((int)dp.x(), (int)dp.y()));
     }
     lastDataPoint = dp;
   }
   
   private void paintCurrentValues()
   {
-    int xPos = chart.leftX()-1;
+    Point textStartPoint = new Point(chart.leftX()-1, window.bottomY());
     for (DataSerie dataSerie: dataSeries)
     {
       if (dataSerie.size() > 0)
       {
-        graphic.foregroundColor(dataSerie.getColor());
+        graphics.color(dataSerie.getColor());
         long currentValue = dataSerie.getDataPoint(dataSerie.size()-1).y();
         String currentValueStr = dataSerie.yAxis().format(currentValue);
         currentValueStr = dataSerie.yAxis().symbol()+"="+currentValueStr+dataSerie.yAxis().scaledUnit().symbolWithBracesOrEmpty();
-        graphic.drawText(xPos, window.bottomY(), currentValueStr);
-        xPos = xPos + currentValueStr.length()+1;
+        graphics.drawText(textStartPoint, currentValueStr);
+        textStartPoint = textStartPoint.move(currentValueStr.length()+1, 0);
       }
-    }
-    
+    }    
   }
 }

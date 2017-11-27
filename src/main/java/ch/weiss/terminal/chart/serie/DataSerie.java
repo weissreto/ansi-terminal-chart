@@ -3,11 +3,10 @@ package ch.weiss.terminal.chart.serie;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.DoubleStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-import ch.weiss.terminal.chart.Color;
+import ch.weiss.terminal.Color;
 
 public class DataSerie
 {

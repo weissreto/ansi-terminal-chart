@@ -2,7 +2,7 @@ package ch.weiss.terminal.chart.serie;
 
 import java.util.concurrent.TimeUnit;
 
-import ch.weiss.terminal.chart.Color;
+import ch.weiss.terminal.Color;
 import ch.weiss.terminal.chart.format.ValueFormat;
 import ch.weiss.terminal.chart.unit.Unit;
 

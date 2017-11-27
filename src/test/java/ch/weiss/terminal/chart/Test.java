@@ -5,19 +5,16 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
-import javax.management.AttributeNotFoundException;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
-import javax.management.MalformedObjectNameException;
-import javax.management.ReflectionException;
-
 import com.sun.tools.attach.AttachNotSupportedException;
 import com.sun.tools.attach.VirtualMachineDescriptor;
 
 import ch.weiss.terminal.AnsiTerminal;
+import ch.weiss.terminal.Color;
 import ch.weiss.terminal.chart.serie.Axis;
 import ch.weiss.terminal.chart.serie.RollingTimeSerie;
 import ch.weiss.terminal.chart.unit.Unit;
+import ch.weiss.terminal.graphics.Point;
+import ch.weiss.terminal.graphics.Rectangle;
 
 public class Test
 {
@@ -40,26 +37,26 @@ public class Test
     term.clear();
     RollingTimeSerie heapUsed = new RollingTimeSerie(new Axis("Used", Unit.BYTES, ""), 10, TimeUnit.MINUTES, Color.BRIGHT_RED);
     RollingTimeSerie heapCommitted = new RollingTimeSerie(new Axis("Committed", Unit.BYTES, ""), 10, TimeUnit.MINUTES, Color.BRIGHT_BLUE);
-    XYChart heapMemory = new XYChart("Heap Memory", new Rectangle(0, 0, 60, 20), heapUsed, heapCommitted);
+    XYChart heapMemory = new XYChart("Heap Memory", new Rectangle(new Point(0, 0), 60, 20), heapUsed, heapCommitted);
     RollingTimeSerie nonHeapUsed = new RollingTimeSerie(new Axis("Used", Unit.BYTES, ""), 10, TimeUnit.MINUTES, Color.BRIGHT_RED);
     RollingTimeSerie nonHeapCommitted = new RollingTimeSerie(new Axis("Commited", Unit.BYTES, ""), 10, TimeUnit.MINUTES, Color.BRIGHT_BLUE);
-    XYChart nonHeapMemory = new XYChart("Non Heap Memory", new Rectangle(62, 0, 60, 20), nonHeapUsed, nonHeapCommitted);
+    XYChart nonHeapMemory = new XYChart("Non Heap Memory", new Rectangle(new Point(62, 0), 60, 20), nonHeapUsed, nonHeapCommitted);
 
     RollingTimeSerie threads = new RollingTimeSerie(new Axis("Threads", Unit.NONE, ""), 10, TimeUnit.MINUTES, Color.BRIGHT_RED);
-    XYChart thread = new XYChart("Threads", new Rectangle(0, 22, 60, 20), threads);
+    XYChart thread = new XYChart("Threads", new Rectangle(new Point(0, 22), 60, 20), threads);
 
     RollingTimeSerie systemCpuUsage = new RollingTimeSerie(new Axis("System CPU Load", Unit.PERCENTAGE, ""), 10, TimeUnit.MINUTES, Color.BRIGHT_RED);
     RollingTimeSerie processCpuUsage = new RollingTimeSerie(new Axis("Process CPU Load", Unit.PERCENTAGE, ""), 10, TimeUnit.MINUTES, Color.BRIGHT_BLUE);
-    XYChart cpu = new XYChart("CPU", new Rectangle(62, 22, 60, 20), systemCpuUsage, processCpuUsage);
+    XYChart cpu = new XYChart("CPU", new Rectangle(new Point(62, 22), 60, 20), systemCpuUsage, processCpuUsage);
 
     RollingTimeSerie oldGcTime = new RollingTimeSerie(new Axis("Old", Unit.MILLI_SECONDS, ""), 10, TimeUnit.MINUTES, Color.BRIGHT_RED);
     RollingTimeSerie newGcTime = new RollingTimeSerie(new Axis("New", Unit.MILLI_SECONDS, ""), 10, TimeUnit.MINUTES, Color.BRIGHT_BLUE);
-    XYChart gc = new XYChart("Garbage Collector", new Rectangle(124, 0, 60, 20), oldGcTime, newGcTime);
+    XYChart gc = new XYChart("Garbage Collector", new Rectangle(new Point(124, 0), 60, 20), oldGcTime, newGcTime);
 
     RollingTimeSerie totalClassLoaded = new RollingTimeSerie(new Axis("Total Loaded", Unit.NONE, ""), 10, TimeUnit.MINUTES, Color.BRIGHT_RED);
     RollingTimeSerie classLoaded = new RollingTimeSerie(new Axis("Loaded", Unit.NONE, ""), 10, TimeUnit.MINUTES, Color.BRIGHT_BLUE);
     RollingTimeSerie classUnloaded = new RollingTimeSerie(new Axis("Unloaded", Unit.NONE, ""), 10, TimeUnit.MINUTES, Color.BRIGHT_YELLOW);
-    XYChart classLoading = new XYChart("Class Loading", new Rectangle(124, 22, 60, 20), totalClassLoaded, classLoaded, classUnloaded);
+    XYChart classLoading = new XYChart("Class Loading", new Rectangle(new Point(124, 22), 60, 20), totalClassLoaded, classLoaded, classUnloaded);
 
     while (true)
     {      
@@ -89,14 +86,14 @@ public class Test
   private void connectToJavaVirtualMaschine() throws AttachNotSupportedException, IOException
   {
     term.clear();
-    term.cursor().position(0,0);
+    term.cursor().position(1,1);
     term.color().brightGreen().newLine().newLine();
     term.write(" -----------").newLine();
     term.write("| ConsoleVM |").newLine();
     term.write(" -----------").newLine();
     term.newLine();
     term.newLine();
-    term.color().brightGreen().style().underline().write("Available Virtual Maschines:").newLine().newLine().reset();
+    term.color().brightGreen().fontStyle().underline().write("Available Virtual Maschines:").newLine().newLine().reset();
     int pos = 0;
     List<VirtualMachineDescriptor> vmDescriptors = jmx.getAvailableVirtualMaschines();
     for (VirtualMachineDescriptor vmDescriptor : vmDescriptors)

@@ -1,7 +1,5 @@
 package ch.weiss.terminal.chart.serie;
 
-import java.util.function.Function;
-
 import ch.weiss.terminal.chart.format.ValueFormat;
 import ch.weiss.terminal.chart.unit.Unit;
 
