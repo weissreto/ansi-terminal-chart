@@ -35,7 +35,7 @@ public class Test
 
   private void drawCharts() throws Exception
   {
-    term.clear();
+    term.clear().screen();
     RollingTimeSerie heapUsed = new RollingTimeSerie(new Axis("Used", Unit.BYTES, ""), 10, TimeUnit.MINUTES, Color.BRIGHT_RED);
     RollingTimeSerie heapCommitted = new RollingTimeSerie(new Axis("Committed", Unit.BYTES, ""), 10, TimeUnit.MINUTES, Color.BRIGHT_BLUE);
     XYChart heapMemory = new XYChart("Heap Memory", new Rectangle(new Point(0, 0), 60, 20), heapUsed, heapCommitted);
@@ -86,7 +86,7 @@ public class Test
 
   private void connectToJavaVirtualMaschine() throws AttachNotSupportedException, IOException
   {
-    term.clear();
+    term.clear().screen();
     term.cursor().position(1,1);
     term.color().brightGreen().newLine().newLine();
     term.write(" -----------").newLine();
