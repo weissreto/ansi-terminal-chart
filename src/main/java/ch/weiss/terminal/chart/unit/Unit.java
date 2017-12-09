@@ -1,10 +1,5 @@
 package ch.weiss.terminal.chart.unit;
 
-import java.text.DateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
 public class Unit
 {
   private BaseUnit baseUnit;

@@ -2,17 +2,12 @@ package ch.weiss.terminal.chart;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map.Entry;
 
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
-import javax.management.IntrospectionException;
-import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanException;
-import javax.management.MBeanInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.MalformedObjectNameException;
-import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
 import javax.management.openmbean.CompositeDataSupport;
@@ -24,8 +19,7 @@ import com.sun.tools.attach.AttachNotSupportedException;
 import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
 
-import ch.weiss.terminal.chart.serie.DataPoint;
-
+@SuppressWarnings("restriction")
 public class Jmx
 {
   private MBeanServerConnection mBeanServer;
@@ -131,6 +125,7 @@ public class Jmx
   {    
     VirtualMachine vm = VirtualMachine.attach(vmDescriptor.id());
     String jmx = vm.startLocalManagementAgent();
+    @SuppressWarnings("resource")
     JMXConnector connector = JMXConnectorFactory.connect(new JMXServiceURL(jmx));
     mBeanServer = connector.getMBeanServerConnection();
   }

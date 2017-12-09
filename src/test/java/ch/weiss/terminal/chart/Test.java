@@ -16,6 +16,7 @@ import ch.weiss.terminal.chart.unit.Unit;
 import ch.weiss.terminal.graphics.Point;
 import ch.weiss.terminal.graphics.Rectangle;
 
+@SuppressWarnings("restriction")
 public class Test
 {
   private AnsiTerminal term = AnsiTerminal.get();
@@ -105,8 +106,10 @@ public class Test
     term.newLine();
     term.color().brightGreen().write("Enter the number of the virtual maschine you want to connect to: ");
     term.color().brightRed();
-    Scanner scanner = new Scanner(System.in);
-    pos = scanner.nextInt();
-    jmx.connect(vmDescriptors.get(pos));
+    try(Scanner scanner = new Scanner(System.in))
+    {
+      pos = scanner.nextInt();
+      jmx.connect(vmDescriptors.get(pos));
+    }
   }
 }
