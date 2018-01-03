@@ -1,5 +1,8 @@
 package ch.weiss.terminal.chart.unit;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class Scaling
 {
   private Scale normalScale;
@@ -112,5 +115,24 @@ class Scaling
     {
       return new Scaling(normalScale);
     }
+  }
+
+  List<Scale> getScales()
+  {
+    List<Scale> scales = new ArrayList<>();
+    scales.add(normalScale);
+    Scale upScale = normalScale.scaleUp();
+    while (upScale != null)
+    {
+      scales.add(upScale);
+      upScale = upScale.scaleUp();
+    }
+    Scale downScale = normalScale.scaleDown();
+    while (downScale != null)
+    {
+      scales.add(downScale);
+      downScale = downScale.scaleDown();
+    }
+    return scales;
   }
 }

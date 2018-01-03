@@ -1,5 +1,7 @@
 package ch.weiss.terminal.chart.unit;
 
+import ch.weiss.check.Check;
+
 public class Unit
 {
   private BaseUnit baseUnit;
@@ -79,6 +81,23 @@ public class Unit
   public String toString()
   {
     return scale.enhanceSymbol(baseUnit.getSymbol()) +" ("+scale.enhanceName(baseUnit.getName())+")";
+  }
+  
+  public static Unit fromSymbol(String symbol)
+  {
+    Check.parameter("symbol").withValue(symbol).isNotBlank();
+    
+    BaseUnit baseUnit  = BaseUnit.fromSymbol(symbol);
+    if (baseUnit == null)
+    {
+      baseUnit = BaseUnit.NONE;
+    }
+    Scale scale = baseUnit.scaleFromSymbol(symbol);
+    if (scale == null)
+    {
+      return null;
+    }
+    return new Unit(baseUnit, scale);
   }
   
 }
