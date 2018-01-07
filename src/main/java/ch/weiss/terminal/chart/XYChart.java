@@ -28,8 +28,7 @@ public class XYChart
   public XYChart(String title, Rectangle window, DataSerie... dataSeries)
   {
     this.title = title;
-    this.window = window;
-    this.chart = window.moveTopLeft(6, 1).moveBottomRight(0, -3);
+    setWindow(window);
     this.dataSeries = Arrays.asList(dataSeries);
   }
   
@@ -42,6 +41,12 @@ public class XYChart
     paintCurrentValues();
   }
   
+  public void setWindow(Rectangle window)
+  {
+    this.window = window;
+    this.chart = window.moveTopLeft(6, 1).moveBottomRight(0, -3);
+  }
+
   private void paintTitle()
   {
     graphics.style(titleStyle);    
@@ -149,7 +154,7 @@ public class XYChart
     {
       deltaX = 1;
     }
-    width = Math.min(width, dataSerie.size()); 
+//    width = Math.min(width, dataSerie.size()); 
     double xScale = deltaX / width;
     
     long deltaY = maxYValue() - minYValue();
