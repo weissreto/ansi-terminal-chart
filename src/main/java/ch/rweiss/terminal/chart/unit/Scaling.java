@@ -1,4 +1,4 @@
-package ch.weiss.terminal.chart.unit;
+package ch.rweiss.terminal.chart.unit;
 
 import java.util.ArrayList;
 import java.util.List;

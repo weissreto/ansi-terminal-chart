@@ -1,4 +1,4 @@
-package ch.weiss.terminal.chart.unit;
+package ch.rweiss.terminal.chart.unit;
 
 class Scale
 {

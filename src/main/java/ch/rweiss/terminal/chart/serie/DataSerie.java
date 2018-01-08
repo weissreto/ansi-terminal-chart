@@ -1,4 +1,4 @@
-package ch.weiss.terminal.chart.serie;
+package ch.rweiss.terminal.chart.serie;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.NoSuchElementException;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-import ch.weiss.terminal.Color;
+import ch.rweiss.terminal.Color;
 
 public class DataSerie
 {

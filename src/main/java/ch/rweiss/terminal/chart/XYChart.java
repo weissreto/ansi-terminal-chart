@@ -1,18 +1,18 @@
-package ch.weiss.terminal.chart;
+package ch.rweiss.terminal.chart;
 
 import java.util.Arrays;
 import java.util.List;
 
-import ch.weiss.terminal.AnsiTerminal;
-import ch.weiss.terminal.Color;
-import ch.weiss.terminal.FontStyle;
-import ch.weiss.terminal.Style;
-import ch.weiss.terminal.chart.serie.DataPoint;
-import ch.weiss.terminal.chart.serie.DataSerie;
-import ch.weiss.terminal.graphics.Graphics;
-import ch.weiss.terminal.graphics.LineStyle;
-import ch.weiss.terminal.graphics.Point;
-import ch.weiss.terminal.graphics.Rectangle;
+import ch.rweiss.terminal.chart.serie.DataPoint;
+import ch.rweiss.terminal.chart.serie.DataSerie;
+import ch.rweiss.terminal.AnsiTerminal;
+import ch.rweiss.terminal.Color;
+import ch.rweiss.terminal.FontStyle;
+import ch.rweiss.terminal.Style;
+import ch.rweiss.terminal.graphics.Graphics;
+import ch.rweiss.terminal.graphics.LineStyle;
+import ch.rweiss.terminal.graphics.Point;
+import ch.rweiss.terminal.graphics.Rectangle;
 
 public class XYChart
 {

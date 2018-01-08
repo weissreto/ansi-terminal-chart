@@ -1,4 +1,4 @@
-package ch.weiss.terminal.chart;
+package ch.rweiss.terminal.chart;
 
 import java.io.IOException;
 import java.util.List;
@@ -8,13 +8,14 @@ import java.util.concurrent.TimeUnit;
 import com.sun.tools.attach.AttachNotSupportedException;
 import com.sun.tools.attach.VirtualMachineDescriptor;
 
-import ch.weiss.terminal.AnsiTerminal;
-import ch.weiss.terminal.Color;
-import ch.weiss.terminal.chart.serie.Axis;
-import ch.weiss.terminal.chart.serie.RollingTimeSerie;
-import ch.weiss.terminal.chart.unit.Unit;
-import ch.weiss.terminal.graphics.Point;
-import ch.weiss.terminal.graphics.Rectangle;
+import ch.rweiss.terminal.chart.XYChart;
+import ch.rweiss.terminal.chart.serie.Axis;
+import ch.rweiss.terminal.chart.serie.RollingTimeSerie;
+import ch.rweiss.terminal.chart.unit.Unit;
+import ch.rweiss.terminal.AnsiTerminal;
+import ch.rweiss.terminal.Color;
+import ch.rweiss.terminal.graphics.Point;
+import ch.rweiss.terminal.graphics.Rectangle;
 
 @SuppressWarnings("restriction")
 public class Test

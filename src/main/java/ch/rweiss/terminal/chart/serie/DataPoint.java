@@ -1,4 +1,4 @@
-package ch.weiss.terminal.chart.serie;
+package ch.rweiss.terminal.chart.serie;
 
 public class DataPoint
 {

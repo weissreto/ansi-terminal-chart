@@ -1,4 +1,4 @@
-package ch.weiss.terminal.chart.format;
+package ch.rweiss.terminal.chart.format;
 
 public interface ValueFormat
 {

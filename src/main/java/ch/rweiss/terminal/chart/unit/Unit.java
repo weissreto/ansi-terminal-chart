@@ -1,6 +1,6 @@
-package ch.weiss.terminal.chart.unit;
+package ch.rweiss.terminal.chart.unit;
 
-import ch.weiss.check.Check;
+import ch.rweiss.check.Check;
 
 public class Unit
 {

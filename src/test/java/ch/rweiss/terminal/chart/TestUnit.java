@@ -1,9 +1,9 @@
-package ch.weiss.terminal.chart;
-
-import ch.weiss.terminal.chart.unit.Unit;
+package ch.rweiss.terminal.chart;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
+
+import ch.rweiss.terminal.chart.unit.Unit;
 
 class TestUnit
 {

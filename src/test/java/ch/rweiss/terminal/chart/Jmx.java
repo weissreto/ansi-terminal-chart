@@ -1,4 +1,4 @@
-package ch.weiss.terminal.chart;
+package ch.rweiss.terminal.chart;
 
 import java.io.IOException;
 import java.util.List;

@@ -1,10 +1,10 @@
-package ch.weiss.terminal.chart.serie;
+package ch.rweiss.terminal.chart.serie;
 
 import java.util.concurrent.TimeUnit;
 
-import ch.weiss.terminal.Color;
-import ch.weiss.terminal.chart.format.ValueFormat;
-import ch.weiss.terminal.chart.unit.Unit;
+import ch.rweiss.terminal.chart.format.ValueFormat;
+import ch.rweiss.terminal.chart.unit.Unit;
+import ch.rweiss.terminal.Color;
 
 public class RollingTimeSerie extends DataSerie
 {
