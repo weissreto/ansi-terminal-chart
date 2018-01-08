@@ -1,1 +1,5 @@
-"c:\program files\java\jdk-9.0.1\bin\java" -cp lib/mvn/*;target/classes;target/test-classes ch.weiss.terminal.chart.Test
+SET JAVA_HOME=c:\program files\java\jdk-9.0.1
+SET MAVEN=C:\Tools\maven\apache-maven-3.5.2\bin\mvn
+SET MAIN_CLASS=ch.weiss.terminal.chart.Test
+
+%MAVEN% exec:java -Dexec.mainClass=%MAIN_CLASS% -Dexec.arguments="%*" -Dexec.classpathScope=test
