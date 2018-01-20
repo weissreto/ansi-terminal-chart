@@ -3,12 +3,13 @@ package ch.rweiss.terminal.chart;
 import java.util.Arrays;
 import java.util.List;
 
-import ch.rweiss.terminal.chart.serie.DataPoint;
-import ch.rweiss.terminal.chart.serie.DataSerie;
 import ch.rweiss.terminal.AnsiTerminal;
 import ch.rweiss.terminal.Color;
 import ch.rweiss.terminal.FontStyle;
 import ch.rweiss.terminal.Style;
+import ch.rweiss.terminal.chart.serie.DataPoint;
+import ch.rweiss.terminal.chart.serie.DataSerie;
+import ch.rweiss.terminal.graphics.Direction;
 import ch.rweiss.terminal.graphics.Graphics;
 import ch.rweiss.terminal.graphics.LineStyle;
 import ch.rweiss.terminal.graphics.Point;
@@ -155,18 +156,23 @@ public class XYChart
       deltaX = 1;
     }
 //    width = Math.min(width, dataSerie.size()); 
-    double xScale = deltaX / width;
+    double xScale = (double)deltaX / (double)width;
     
     long deltaY = maxYValue() - minYValue();
     if (deltaY == 0)
     {
       deltaY = 1;
     }
-    double yScale = deltaY / height;
+    double yScale = (double)deltaY / (double)height;
     lastDataPoint = null;
     dataSerie.getDataPointStream()
       .map(dataPoint -> transform(dataSerie, dataPoint, xScale, yScale))
       .forEach(this::paint);
+  }
+
+  private void debug(String debugText)
+  {
+    graphics.drawText(window.bottomRight(), Direction.LEFT, debugText);
   }
 
   private DataPoint transform(DataSerie dataSerie, DataPoint dataPoint, double xScale, double yScale)
