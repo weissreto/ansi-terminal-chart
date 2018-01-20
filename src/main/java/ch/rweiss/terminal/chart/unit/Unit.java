@@ -1,6 +1,8 @@
 package ch.rweiss.terminal.chart.unit;
 
-import ch.rweiss.check.Check;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class Unit
 {
@@ -24,6 +26,30 @@ public class Unit
   public static final Unit DAY_TIME = new Unit(BaseUnit.DAY_TIME);
   public static final Unit NONE = new Unit(BaseUnit.NONE);
   public static final Unit PERCENTAGE = new Unit(BaseUnit.PERCENTAGE);
+  
+  public static final List<Unit> ALL;
+  static
+  {
+    List<Unit> all = new ArrayList<>();
+    for (BaseUnit baseUnit : BaseUnit.ALL)
+    {
+      Unit bUnit = new Unit(baseUnit);
+      all.add(bUnit);
+      Unit upScaleUnit = bUnit.scaleUp();
+      while (!all.contains(upScaleUnit))
+      {
+        all.add(upScaleUnit);
+        upScaleUnit = upScaleUnit.scaleUp();
+      }
+      Unit downScaleUnit = bUnit.scaleDown();
+      while (!all.contains(downScaleUnit))
+      {
+        all.add(downScaleUnit);
+        downScaleUnit = downScaleUnit.scaleDown();
+      }
+    }
+    ALL = all;
+  }
   
   private Unit(BaseUnit baseUnit)
   {
@@ -62,6 +88,11 @@ public class Unit
     return scale.enhanceSymbol(baseUnit.getSymbol()); 
   }
   
+  public String name()
+  {
+    return scale.enhanceName(baseUnit.getName());
+  }
+  
   public String symbolWithBracesOrEmpty()
   {
     String symbol = symbol();
@@ -83,21 +114,28 @@ public class Unit
     return scale.enhanceSymbol(baseUnit.getSymbol()) +" ("+scale.enhanceName(baseUnit.getName())+")";
   }
   
-  public static Unit fromSymbol(String symbol)
+  @Override
+  public boolean equals(Object obj)
   {
-    Check.parameter("symbol").withValue(symbol).isNotBlank();
-    
-    BaseUnit baseUnit  = BaseUnit.fromSymbol(symbol);
-    if (baseUnit == null)
+    if (obj == this)
     {
-      baseUnit = BaseUnit.NONE;
+      return true;
     }
-    Scale scale = baseUnit.scaleFromSymbol(symbol);
-    if (scale == null)
+    if (obj == null)
     {
-      return null;
+      return false;
     }
-    return new Unit(baseUnit, scale);
+    if (obj.getClass() != Unit.class)
+    {
+      return false;
+    }
+    Unit other = (Unit)obj;
+    return baseUnit.equals(other.baseUnit) && scale.equals(other.scale);
   }
   
+  @Override
+  public int hashCode()
+  {
+    return Objects.hash(baseUnit, scale);
+  }
 }

@@ -1,5 +1,7 @@
 package ch.rweiss.terminal.chart.unit;
 
+import java.util.Objects;
+
 class Scale
 {
   private final String symbol;
@@ -127,4 +129,34 @@ class Scale
   {
     return symbol+" ("+name+")";
   }
+  
+  @Override
+  public boolean equals(Object obj)
+  {
+    if (obj == this)
+    {
+      return true;
+    }
+    if (obj == null)
+    {
+      return false;
+    }
+    if (obj.getClass() != Scale.class)
+    {
+      return false;
+    }
+    Scale other = (Scale)obj;
+    return Objects.equals(symbol, other.symbol) && 
+           Objects.equals(name, other.name) && 
+           downScaleFactor == other.downScaleFactor &&
+           upScaleFactor == other.upScaleFactor &&
+           useAsFullUnitSymbol == other.useAsFullUnitSymbol;
+  }
+  
+  @Override
+  public int hashCode()
+  {
+    return Objects.hash(symbol, name);
+  }
+  
 }

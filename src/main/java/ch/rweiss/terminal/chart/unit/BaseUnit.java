@@ -1,5 +1,7 @@
 package ch.rweiss.terminal.chart.unit;
 
+import java.util.Objects;
+
 public class BaseUnit
 {
   private final String symbol;
@@ -12,7 +14,7 @@ public class BaseUnit
   static final BaseUnit NONE = new BaseUnit("", "", Scaling.METRIC);
   static final BaseUnit PERCENTAGE = new BaseUnit("%", "percent", Scaling.NONE);
   
-  private static final BaseUnit[] BASE_UNITS = new BaseUnit[] {SECONDS, BYTES, DAY_TIME, PERCENTAGE, NONE};
+  static final BaseUnit[] ALL = new BaseUnit[] {SECONDS, BYTES, DAY_TIME, PERCENTAGE, NONE};
 
   private BaseUnit(String symbol, String name, Scaling scaling)
   {
@@ -41,28 +43,29 @@ public class BaseUnit
   {
     return symbol +" ("+name+")";
   }
-
-  public static BaseUnit fromSymbol(String symbol)
+  
+  @Override
+  public boolean equals(Object obj)
   {
-    for (BaseUnit baseUnit : BASE_UNITS)
+    if (obj == this)
     {
-      if (!baseUnit.getSymbol().isEmpty() && symbol.endsWith(baseUnit.getSymbol()))
-      {
-        return baseUnit;
-      }
+      return true;
     }
-    return null;
+    if (obj == null)
+    {
+      return false;
+    }
+    if (obj.getClass() != BaseUnit.class)
+    {
+      return false;
+    }
+    BaseUnit other = (BaseUnit)obj;
+    return Objects.equals(name, other.name) && Objects.equals(symbol, other.symbol) && Objects.equals(scaling, other.scaling);
   }
-
-  public Scale scaleFromSymbol(String symbolWithScale)
+  
+  @Override
+  public int hashCode()
   {
-    for (Scale scale : getScaling().getScales())
-    {
-      if (scale.enhanceSymbol(symbol).equals(symbolWithScale))
-      {
-        return scale;
-      }
-    }
-    return null;
+    return Objects.hash(name, symbol, scaling);
   }
 }
