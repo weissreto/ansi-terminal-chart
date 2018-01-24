@@ -3,7 +3,6 @@ package ch.rweiss.terminal.chart;
 import java.util.Arrays;
 import java.util.List;
 
-import ch.rweiss.terminal.AnsiTerminal;
 import ch.rweiss.terminal.Color;
 import ch.rweiss.terminal.FontStyle;
 import ch.rweiss.terminal.Style;
@@ -14,54 +13,55 @@ import ch.rweiss.terminal.graphics.Graphics;
 import ch.rweiss.terminal.graphics.LineStyle;
 import ch.rweiss.terminal.graphics.Point;
 import ch.rweiss.terminal.graphics.Rectangle;
+import ch.rweiss.terminal.widget.Widget;
 
-public class XYChart
+public class XYChart extends Widget
 {
   private List<DataSerie> dataSeries;
-  private Rectangle window;
   private Rectangle chart;
-  private Graphics graphics = AnsiTerminal.get().graphics();
   private DataPoint lastDataPoint;
   private String title;
   private Style titleStyle = Style.create().withColor(Color.BRIGHT_GREEN).withFontStyle(FontStyle.UNDERLINE).toStyle();
   private Style axisStyle = Style.create().withColor(Color.BRIGHT_GREEN).toStyle();
   
-  public XYChart(String title, Rectangle window, DataSerie... dataSeries)
+  public XYChart(String title, Rectangle bounds, DataSerie... dataSeries)
   {
     this.title = title;
-    setWindow(window);
+    bounds(bounds);
     this.dataSeries = Arrays.asList(dataSeries);
   }
   
-  public void paint()
+  @Override
+  public void paint(Graphics graphics)
   {        
     graphics.reset();
-    paintTitle();
-    paintAxis();
-    paintDataSeries();
-    paintCurrentValues();
+    paintTitle(graphics);
+    paintAxis(graphics);
+    paintDataSeries(graphics);
+    paintCurrentValues(graphics);
   }
   
-  public void setWindow(Rectangle window)
+  @Override
+  public void bounds(Rectangle bounds)
   {
-    this.window = window;
-    this.chart = window.moveTopLeft(6, 1).moveBottomRight(0, -3);
+    super.bounds(bounds);
+    this.chart = bounds.moveTopLeft(6, 1).moveBottomRight(0, -3);
   }
 
-  private void paintTitle()
+  private void paintTitle(Graphics graphics)
   {
     graphics.style(titleStyle);    
-    graphics.drawText(new Point(window.leftX()+(window.width()-title.length())/2, window.topY()), title);
+    graphics.drawText(new Point(bounds().leftX()+(bounds().width()-title.length())/2, bounds().topY()), title);
   }
 
-  private void paintAxis()
+  private void paintAxis(Graphics graphics)
   {
     graphics.style(axisStyle);
-    paintYAxis(dataSeries.get(0));
-    paintXAxis(dataSeries.get(0));
+    paintYAxis(graphics, dataSeries.get(0));
+    paintXAxis(graphics, dataSeries.get(0));
   }
 
-  private void paintYAxis(DataSerie dataSerie)
+  private void paintYAxis(Graphics graphics, DataSerie dataSerie)
   {
     graphics.drawCharacter(chart.topLeft().move(-1, 0), '^');
     graphics.drawVerticalLine(chart.topLeft().move(-1, 1), chart.height());
@@ -110,7 +110,7 @@ public class XYChart
   }
 
 
-  private void paintXAxis(DataSerie dataSerie)
+  private void paintXAxis(Graphics graphics, DataSerie dataSerie)
   {
     graphics.drawCharacter(chart.bottomLeft().move(-1, 1), LineStyle.SINGLE_LINE.bottomLeft());
     graphics.drawHorizontalLine(chart.bottomLeft().move(0, 1), chart.width());
@@ -136,12 +136,12 @@ public class XYChart
     }
   }
   
-  private void paintDataSeries()
+  private void paintDataSeries(Graphics graphics)
   {
-    dataSeries.forEach(this::paintDataSerie);
+    dataSeries.forEach(ds -> paintDataSerie(graphics, ds));
   }
 
-  private void paintDataSerie(DataSerie dataSerie)
+  private void paintDataSerie(Graphics graphics, DataSerie dataSerie)
   {
     int width;
     int height;
@@ -167,12 +167,12 @@ public class XYChart
     lastDataPoint = null;
     dataSerie.getDataPointStream()
       .map(dataPoint -> transform(dataSerie, dataPoint, xScale, yScale))
-      .forEach(this::paint);
+      .forEach(dp -> paint(graphics, dp));
   }
 
-  private void debug(String debugText)
+  private void debug(Graphics graphics, String debugText)
   {
-    graphics.drawText(window.bottomRight(), Direction.LEFT, debugText);
+    graphics.drawText(bounds().bottomRight(), Direction.LEFT, debugText);
   }
 
   private DataPoint transform(DataSerie dataSerie, DataPoint dataPoint, double xScale, double yScale)
@@ -187,7 +187,7 @@ public class XYChart
     return new DataPoint(x, y);
   }
   
-  private void paint(DataPoint dp)
+  private void paint(Graphics graphics, DataPoint dp)
   {
     if (lastDataPoint != null)
     {
@@ -202,9 +202,9 @@ public class XYChart
     lastDataPoint = dp;
   }
   
-  private void paintCurrentValues()
+  private void paintCurrentValues(Graphics graphics)
   {
-    Point textStartPoint = new Point(chart.leftX()-1, window.bottomY());
+    Point textStartPoint = new Point(chart.leftX()-1, bounds().bottomY());
     for (DataSerie dataSerie: dataSeries)
     {
       if (dataSerie.size() > 0)
