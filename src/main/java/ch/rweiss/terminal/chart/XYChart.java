@@ -36,9 +36,24 @@ public class XYChart extends Widget
   {        
     graphics.reset();
     paintTitle(graphics);
-    paintAxis(graphics);
-    paintDataSeries(graphics);
-    paintCurrentValues(graphics);
+    if (dataSeries.isEmpty())
+    {
+      paintNoData(graphics);
+    }
+    else
+    {
+      paintAxis(graphics);
+      paintDataSeries(graphics);
+      paintCurrentValues(graphics);
+    }
+  }
+
+  private void paintNoData(Graphics graphics)
+  {
+    graphics.reset();
+    String noData = "No data";
+    graphics.color(Color.YELLOW);
+    graphics.drawText(bounds().center().move(-noData.length()/2,0), noData);
   }
   
   @Override
