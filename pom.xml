@@ -1,9 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>ch.rweiss</groupId>
   <artifactId>ansi-terminal-chart</artifactId>
   <version>0.0.3-SNAPSHOT</version>
-  
+
   <build>
     <plugins>
       <plugin>
@@ -30,7 +31,36 @@
         </configuration>
       </plugin>
     </plugins>
+    <extensions>
+      <extension>
+        <groupId>io.packagecloud.maven.wagon</groupId>
+        <artifactId>maven-packagecloud-wagon</artifactId>
+        <version>0.0.4</version>
+      </extension>
+    </extensions>
   </build>
+  <repositories>
+    <repository>
+      <id>weissreto-travis</id>
+      <url>https://packagecloud.io/weissreto/travis/maven2</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+  <distributionManagement>
+    <repository>
+      <id>packagecloud-travis</id>
+      <url>packagecloud+https://packagecloud.io/weissreto/travis</url>
+    </repository>
+    <snapshotRepository>
+      <id>packagecloud-travis</id>
+      <url>packagecloud+https://packagecloud.io/weissreto/travis</url>
+    </snapshotRepository>
+  </distributionManagement>
   <dependencies>
     <dependency>
       <groupId>ch.rweiss</groupId>
@@ -57,5 +87,5 @@
     </dependency>
 
   </dependencies>
-  
+
 </project>
