@@ -8,7 +8,6 @@ import ch.rweiss.terminal.FontStyle;
 import ch.rweiss.terminal.Style;
 import ch.rweiss.terminal.chart.serie.DataPoint;
 import ch.rweiss.terminal.chart.serie.DataSerie;
-import ch.rweiss.terminal.graphics.Direction;
 import ch.rweiss.terminal.graphics.Graphics;
 import ch.rweiss.terminal.graphics.LineStyle;
 import ch.rweiss.terminal.graphics.Point;
@@ -20,9 +19,9 @@ public class XYChart extends Widget
   private List<DataSerie> dataSeries;
   private Rectangle chart;
   private DataPoint lastDataPoint;
-  private String title;
-  private Style titleStyle = Style.create().withColor(Color.BRIGHT_GREEN).withFontStyle(FontStyle.UNDERLINE).toStyle();
-  private Style axisStyle = Style.create().withColor(Color.BRIGHT_GREEN).toStyle();
+  private final String title;
+  private final Style titleStyle = Style.create().withColor(Color.BRIGHT_GREEN).withFontStyle(FontStyle.UNDERLINE).toStyle();
+  private final Style axisStyle = Style.create().withColor(Color.BRIGHT_GREEN).toStyle();
   
   public XYChart(String title, Rectangle bounds, DataSerie... dataSeries)
   {
@@ -65,8 +64,13 @@ public class XYChart extends Widget
 
   private void paintTitle(Graphics graphics)
   {
-    graphics.style(titleStyle);    
-    graphics.drawText(new Point(bounds().leftX()+(bounds().width()-title.length())/2, bounds().topY()), title);
+    graphics.style(titleStyle);
+    String text = title;
+    if (text.length() > bounds().width())
+    {
+      text = text.substring(0, bounds().width());
+    }
+    graphics.drawText(new Point(bounds().leftX()+(bounds().width()-text.length())/2, bounds().topY()), text);
   }
 
   private void paintAxis(Graphics graphics)
@@ -185,11 +189,6 @@ public class XYChart extends Widget
       .forEach(dp -> paint(graphics, dp));
   }
 
-  private void debug(Graphics graphics, String debugText)
-  {
-    graphics.drawText(bounds().bottomRight(), Direction.LEFT, debugText);
-  }
-
   private DataPoint transform(DataSerie dataSerie, DataPoint dataPoint, double xScale, double yScale)
   {
     long x = (long)((dataPoint.x() - dataSerie.minXValue())/xScale);
@@ -219,18 +218,10 @@ public class XYChart extends Widget
   
   private void paintCurrentValues(Graphics graphics)
   {
-    Point textStartPoint = new Point(chart.leftX()-1, bounds().bottomY());
-    for (DataSerie dataSerie: dataSeries)
-    {
-      if (dataSerie.size() > 0)
-      {
-        graphics.color(dataSerie.getColor());
-        long currentValue = dataSerie.getDataPoint(dataSerie.size()-1).y();
-        String currentValueStr = dataSerie.yAxis().format(currentValue);
-        currentValueStr = dataSerie.yAxis().symbol()+"="+currentValueStr+dataSerie.yAxis().scaledUnit().symbolWithBracesOrEmpty();
-        graphics.drawText(textStartPoint, currentValueStr);
-        textStartPoint = textStartPoint.move(currentValueStr.length()+1, 0);
-      }
-    }    
+    CurrentValueArea area = new CurrentValueArea(
+        new Point(chart.leftX()-1, bounds().bottomY()), 
+        chart.width()+2, 
+        dataSeries);
+    area.paint(graphics);
   }
 }
