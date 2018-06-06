@@ -77,7 +77,12 @@ public class Axis
 
   public void scale(long value)
   {
-    Unit newScaledUnit = scaledUnit;
+    if (value == 0)
+    {
+      scaledUnit = unit;
+      return;
+    }
+    Unit newScaledUnit = unit;
     do
     {
       scaledUnit = newScaledUnit;
