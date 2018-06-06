@@ -135,24 +135,50 @@ public class XYChart extends Widget
     graphics.drawHorizontalLine(chart.bottomLeft().move(0, 1), chart.width());
     graphics.drawCharacter(chart.bottomRight().move(0, 1), '>');
     
-    String displayText = dataSerie.xAxis().displayText();
-    Point textStartPoint = chart.centerBottom().move(-displayText.length()/2, 2);
-    graphics.drawText(textStartPoint, displayText);
-    
+    String centerText = dataSerie.xAxis().displayText();
+    String leftText = "";
+    String rightText = "";
     if (dataSerie.size() > 0)
     {
       long minXValue = dataSerie.minXValue();
-      String minXValueAsText = dataSerie.xAxis().format(minXValue);
-      graphics.drawText(chart.bottomLeft().move(-1, 2), minXValueAsText);
+      leftText = dataSerie.xAxis().format(minXValue);
     }
     if (dataSerie.size() > 1)
     {
       long maxXValue = dataSerie.maxXValue();
-      String maxXValueAsText = dataSerie.xAxis().format(maxXValue);
-      graphics.drawText(
-          chart.bottomRight().move(-maxXValueAsText.length()+1, 2), 
-          maxXValueAsText);
+      rightText = dataSerie.xAxis().format(maxXValue);
     }
+    
+    Point center = chart.centerBottom().move(0, 2);
+    Point left = chart.bottomLeft().move(-1, 2);
+    Point right = chart.bottomRight().move(0, 2);
+    
+    if (leftText.length() + 1 + centerText.length()/2  > center.x() - left.x() ||
+        centerText.length()/2 + 1 + rightText.length() > right.x() - center.x())
+    {
+      centerText = "";
+      if (leftText.length() + rightText.length() + 1 > right.x() - left.x())
+      {
+        leftText = "";
+        if (rightText.length() > right.x() - left.x())
+        {
+          rightText = "";
+        }
+      }
+    }
+    
+    if (!leftText.isEmpty())
+    {
+      graphics.drawText(left, leftText);
+    }
+    if (!centerText.isEmpty())
+    {
+      graphics.drawText(center.move(-centerText.length()/2, 0), centerText);
+    }
+    if (!rightText.isEmpty())
+    {
+      graphics.drawText(right.move(-rightText.length()+1, 0), rightText);
+    }    
   }
   
   private void paintDataSeries(Graphics graphics)
