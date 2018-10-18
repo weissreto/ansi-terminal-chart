@@ -1,14 +1,15 @@
 package ch.rweiss.terminal.chart;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.Test;
 
 import ch.rweiss.terminal.chart.unit.Unit;
 
-class TestUnit
+public class TestUnit
 {
   @Test
-  void testToString()
+  public void testToString()
   {
     assertThat(Unit.BYTES.toString()).isEqualTo("B (bytes)");
     assertThat(Unit.KILO_BYTES.toString()).isEqualTo("kB (kilo bytes)");
@@ -18,7 +19,7 @@ class TestUnit
   }
   
   @Test
-  void symbol()
+  public void symbol()
   {
     assertThat(Unit.BYTES.symbol()).isEqualTo("B");
     assertThat(Unit.KILO_BYTES.symbol()).isEqualTo("kB");
@@ -28,7 +29,7 @@ class TestUnit
   }
 
   @Test
-  void scaleUp()
+  public void scaleUp()
   {
     long value = Unit.BYTES.convertTo(1024*1024*1024, Unit.KILO_BYTES);
     assertThat(value).isEqualTo(1024*1024);
@@ -39,7 +40,7 @@ class TestUnit
   }
   
   @Test
-  void scaleDown()
+  public void scaleDown()
   {
     long value = Unit.MINUTES.convertTo(1, Unit.SECONDS);
     assertThat(value).isEqualTo(60);
